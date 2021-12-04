@@ -5,13 +5,12 @@ struct BingoRow {
 }
 
 impl BingoRow {
-    fn new(s: &str) -> BingoRow {
+    fn new(input_strings: &str) -> BingoRow {
         let mut proto = BingoRow { values: vec![] };
         let regex = Regex::new(r"\s+").unwrap();
-        let values = regex.split(s);
-        for v in values {
-            let new_value = v.parse::<u8>();
-            match new_value {
+
+        for token in regex.split(input_strings) {
+            match token.parse::<u8>() {
                 Ok(n) => proto.values.push(n),
                 _ => {}
             }
@@ -40,18 +39,26 @@ impl BingoBoard {
         self.rows[row].values[col]
     }
 
+    fn get_width(&self) -> usize {
+        self.rows[0].values.len()
+    }
+
+    fn get_height(&self) -> usize {
+        self.rows.len()
+    }
+
     pub fn pick_number(&mut self, n: u8) {
         self.numbers.push(n)
     }
 
     pub fn has_bingo(&self) -> bool {
-        for row in &self.rows {
-            if self.scan_row(row) {
+        for row_index in 0..self.get_height() {
+            if self.scan_row(row_index) {
                 return true;
             }
         }
 
-        for col_index in 0..self.rows[0].values.len() {
+        for col_index in 0..self.get_width() {
             if self.scan_col(col_index) {
                 return true;
             }
@@ -61,7 +68,7 @@ impl BingoBoard {
     }
 
     fn scan_col(&self, col_index: usize) -> bool {
-        for row_index in 0..self.rows.len() {
+        for row_index in 0..self.get_height() {
             if !self.numbers.contains(&self.get_value(col_index, row_index)) {
                 return false;
             }
@@ -69,9 +76,9 @@ impl BingoBoard {
         true
     }
 
-    fn scan_row(&self, row: &BingoRow) -> bool {
-        for column_value in &row.values {
-            if !self.numbers.contains(&column_value) {
+    fn scan_row(&self, row_index: usize) -> bool {
+        for col_index in 0..self.get_width() {
+            if !self.numbers.contains(&self.get_value(col_index, row_index)) {
                 return false;
             }
         }
@@ -80,8 +87,8 @@ impl BingoBoard {
 
     pub fn get_score(&self) -> u32 {
         let mut sum: u32 = 0;
-        for row_index in 0..self.rows.len() {
-            for col_index in 0..self.rows[row_index].values.len() {
+        for row_index in 0..self.get_height() {
+            for col_index in 0..self.get_width() {
                 let v = self.get_value(col_index, row_index);
                 if !self.numbers.contains(&v) {
                     sum += v as u32
