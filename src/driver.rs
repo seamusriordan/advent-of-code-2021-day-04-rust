@@ -41,4 +41,20 @@ impl BingoDriver {
         }
         0
     }
+
+    pub fn find_last(&mut self) -> u32 {
+        let mut last_score = 0;
+
+        for n in &self.numbers {
+            for board in &mut self.boards {
+                board.pick_number(*n);
+
+                if board.has_bingo() && !board.has_won {
+                    last_score = board.get_score();
+                    board.has_won = true
+                }
+            }
+        }
+        last_score
+    }
 }

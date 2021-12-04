@@ -15,7 +15,6 @@ impl BingoRow {
                 Ok(n) => proto.values.push(n),
                 _ => {}
             }
-
         }
         proto
     }
@@ -23,12 +22,13 @@ impl BingoRow {
 
 pub struct BingoBoard {
     rows: Vec<BingoRow>,
+    pub has_won: bool,
     numbers: Vec<u8>,
 }
 
 impl BingoBoard {
     pub fn new(rows: Vec<&str>) -> BingoBoard {
-        let mut proto = BingoBoard { rows: vec![], numbers: vec![] };
+        let mut proto = BingoBoard { rows: vec![], numbers: vec![], has_won: false };
 
         for row in rows {
             proto.rows.push(BingoRow::new(row))

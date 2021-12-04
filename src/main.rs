@@ -7,5 +7,6 @@ fn main() {
 
     let mut driver = BingoDriver::new(&mut input);
 
-    print!("{:?}\n", driver.process())
+    print!("{:?}\n", driver.process());
+    print!("{:?}\n", driver.find_last());
 }
